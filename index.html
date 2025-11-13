@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parallel Architectures - Game Quiz</title>
+    <title>Parallel Architectures - Mobile Game Quiz</title>
     <style>
         :root {
             --primary: #3498db;
@@ -29,7 +29,7 @@
             animation: gradientBG 15s ease infinite;
             color: var(--dark);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
         
         @keyframes gradientBG {
@@ -39,11 +39,11 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             position: relative;
         }
@@ -51,42 +51,32 @@
         .header {
             background: linear-gradient(to right, var(--primary), var(--accent));
             color: white;
-            padding: 30px;
+            padding: 20px 15px;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
         
-        .header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
-            background-size: cover;
-        }
-        
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
             position: relative;
             z-index: 1;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
         
         .header p {
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             opacity: 0.9;
             position: relative;
             z-index: 1;
         }
         
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 30px;
+        .mobile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 15px;
             background: rgba(255, 255, 255, 0.9);
             border-bottom: 1px solid #ddd;
         }
@@ -95,39 +85,59 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
         }
         
         .stat-value {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: var(--primary);
         }
         
         .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--dark);
             opacity: 0.7;
+            margin-top: 2px;
+        }
+        
+        .timer-section {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        .timer {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1rem;
         }
         
         .game-area {
             display: flex;
-            min-height: 500px;
+            flex-direction: column;
+            min-height: 70vh;
         }
         
         .question-side {
-            flex: 3;
-            padding: 30px;
+            padding: 20px 15px;
             display: flex;
             flex-direction: column;
+            flex: 1;
         }
         
         .question-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border-left: 5px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -136,38 +146,33 @@
         
         .question-text {
             color: var(--dark);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            line-height: 1.5;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            text-align: center;
         }
         
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-        }
-        
-        @media (min-width: 768px) {
-            .options-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            gap: 10px;
         }
         
         .option-btn {
             display: flex;
             align-items: center;
-            padding: 15px;
+            padding: 12px 15px;
             background: var(--light);
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
             border: 2px solid transparent;
-            font-size: 1rem;
+            font-size: 0.9rem;
+            min-height: 60px;
         }
         
-        .option-btn:hover {
-            background: #e0e7ff;
-            transform: translateX(5px);
+        .option-btn:active {
+            transform: scale(0.98);
         }
         
         .option-btn.selected {
@@ -189,30 +194,34 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 30px;
-            height: 30px;
+            width: 25px;
+            height: 25px;
             background: var(--primary);
             color: white;
             border-radius: 50%;
-            margin-right: 15px;
+            margin-right: 12px;
             font-weight: bold;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        .option-text {
+            flex: 1;
         }
         
         .game-side {
-            flex: 2;
-            padding: 30px;
+            padding: 15px;
             background: #f8f9fa;
-            display: flex;
-            flex-direction: column;
+            border-top: 2px solid #e9ecef;
         }
         
         .progress-container {
             background: var(--light);
-            height: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 15px;
             overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         
         .progress-bar {
@@ -220,51 +229,76 @@
             background: linear-gradient(to right, var(--secondary), var(--primary));
             width: 0%;
             transition: width 0.5s ease;
-            border-radius: 5px;
+            border-radius: 4px;
         }
         
-        .level-indicator {
-            text-align: center;
-            margin-bottom: 20px;
+        .level-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .level-info {
+            text-align: left;
         }
         
         .level-title {
-            font-size: 1.2rem;
+            font-size: 0.8rem;
             color: var(--dark);
-            margin-bottom: 5px;
+            opacity: 0.7;
         }
         
         .level-name {
-            font-size: 1.5rem;
+            font-size: 1rem;
             font-weight: bold;
             color: var(--primary);
         }
         
+        .xp-section {
+            text-align: right;
+        }
+        
+        .xp-bar {
+            width: 120px;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .xp-progress {
+            height: 100%;
+            background: linear-gradient(to right, #ff9a00, #ff5e00);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+        
         .question-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
-            flex-grow: 1;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-top: 15px;
         }
         
         .grid-item {
-            width: 50px;
-            height: 50px;
+            width: 100%;
+            aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--light);
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
+            font-size: 0.8rem;
             position: relative;
         }
         
-        .grid-item:hover {
-            transform: scale(1.1);
-            background: #d6eaf8;
+        .grid-item:active {
+            transform: scale(0.95);
         }
         
         .grid-item.current {
@@ -280,14 +314,14 @@
         .grid-item.answered.correct::after {
             content: "✓";
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -3px;
+            right: -3px;
             background: var(--success);
             color: white;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -296,68 +330,67 @@
         .grid-item.answered.wrong::after {
             content: "✗";
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -3px;
+            right: -3px;
             background: var(--danger);
             color: white;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
         .feedback {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
             font-weight: 500;
             display: none;
+            font-size: 0.9rem;
         }
         
         .feedback.correct {
             background: rgba(39, 174, 96, 0.1);
             color: var(--success);
-            border-left: 4px solid var(--success);
+            border-left: 3px solid var(--success);
         }
         
         .feedback.wrong {
             background: rgba(231, 76, 60, 0.1);
             color: var(--danger);
-            border-left: 4px solid var(--danger);
+            border-left: 3px solid var(--danger);
         }
         
         .controls {
             display: flex;
             justify-content: space-between;
-            padding: 20px 30px;
+            padding: 15px;
             background: var(--light);
             border-top: 1px solid #ddd;
+            gap: 10px;
         }
         
         button {
-            padding: 12px 25px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 50px;
-            font-size: 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            flex: 1;
+            min-height: 44px;
         }
         
         button:active {
-            transform: translateY(1px);
+            transform: translateY(2px);
         }
         
         .nav-btn {
@@ -374,40 +407,44 @@
         #submitBtn {
             background: linear-gradient(to right, var(--primary), var(--accent));
             color: white;
+            flex: 2;
         }
         
         #retryBtn {
             background: linear-gradient(to right, var(--secondary), #1abc9c);
             color: white;
             display: none;
+            width: 100%;
+            margin: 10px 0;
         }
         
         #result {
             text-align: center;
-            padding: 30px;
-            font-size: 1.5rem;
+            padding: 25px 20px;
+            font-size: 1.2rem;
             font-weight: 700;
             background: white;
-            margin: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             display: none;
         }
         
         .score-display {
-            font-size: 3rem;
-            margin: 20px 0;
+            font-size: 2.5rem;
+            margin: 15px 0;
             background: linear-gradient(to right, var(--primary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
         .achievement {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 10px;
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
             background: rgba(52, 152, 219, 0.1);
-            border-left: 4px solid var(--primary);
+            border-left: 3px solid var(--primary);
+            font-size: 0.9rem;
         }
         
         .particles {
@@ -438,41 +475,74 @@
             }
         }
         
-        .timer {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 15px;
-            border-radius: 50px;
-            font-weight: bold;
-            color: white;
-            backdrop-filter: blur(5px);
-        }
-        
-        .xp-bar {
-            height: 10px;
-            background: #e0e0e0;
-            border-radius: 5px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        
-        .xp-progress {
-            height: 100%;
-            background: linear-gradient(to right, #ff9a00, #ff5e00);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 5px;
-        }
-        
         .streak {
             display: flex;
             align-items: center;
-            margin-top: 10px;
+            justify-content: center;
+            margin-top: 3px;
         }
         
         .streak-icon {
             color: #ff5e00;
-            margin-right: 5px;
-            font-size: 1.2rem;
+            margin-right: 3px;
+            font-size: 0.9rem;
+        }
+        
+        /* تحسينات للشاشات الصغيرة جداً */
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .question-text {
+                font-size: 1rem;
+            }
+            
+            .option-btn {
+                padding: 10px 12px;
+                min-height: 55px;
+            }
+            
+            .question-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* تحسينات للشاشات المتوسطة */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 700px;
+                margin: 20px auto;
+            }
+            
+            .game-area {
+                flex-direction: row;
+                min-height: 500px;
+            }
+            
+            .question-side {
+                flex: 3;
+                border-right: 2px solid #e9ecef;
+            }
+            
+            .game-side {
+                flex: 2;
+                border-top: none;
+            }
+            
+            .mobile-stats {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .timer-section {
+                grid-column: auto;
+                margin-top: 0;
+            }
         }
     </style>
 </head>
@@ -480,10 +550,10 @@
     <div class="container">
         <div class="header">
             <h1>Parallel Architectures Game</h1>
-            <p>Learn through play - Master parallel computing concepts!</p>
+            <p>Learn through play - Master parallel computing!</p>
         </div>
         
-        <div class="stats-bar">
+        <div class="mobile-stats">
             <div class="stat">
                 <div class="stat-value" id="score">0</div>
                 <div class="stat-label">Score</div>
@@ -501,15 +571,11 @@
                 </div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="timer">05:00</div>
-                <div class="stat-label">Time Left</div>
-            </div>
-            <div class="stat">
                 <div class="stat-value" id="level">1</div>
                 <div class="stat-label">Level</div>
-                <div class="xp-bar">
-                    <div class="xp-progress" id="xpProgress"></div>
-                </div>
+            </div>
+            <div class="timer-section">
+                <div class="timer" id="timer">05:00</div>
             </div>
         </div>
         
@@ -520,32 +586,39 @@
                     <div class="options-grid" id="optionsGrid"></div>
                     <div class="feedback" id="feedback"></div>
                 </div>
-                
-                <div class="controls">
-                    <button class="nav-btn" id="prevBtn">Previous</button>
-                    <button id="submitBtn">Check Answer</button>
-                    <button class="nav-btn" id="nextBtn">Next Question</button>
-                </div>
             </div>
             
             <div class="game-side">
-                <div class="level-indicator">
-                    <div class="level-title">Current Level</div>
-                    <div class="level-name" id="levelName">Novice</div>
+                <div class="level-section">
+                    <div class="level-info">
+                        <div class="level-title">Current Level</div>
+                        <div class="level-name" id="levelName">Novice</div>
+                    </div>
+                    <div class="xp-section">
+                        <div class="level-title">XP Progress</div>
+                        <div class="xp-bar">
+                            <div class="xp-progress" id="xpProgress"></div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="progress-container">
                     <div class="progress-bar" id="progressBar"></div>
                 </div>
-                
-                <div>Questions Progress</div>
+                <div style="font-size: 0.8rem; text-align: center; margin-bottom: 10px;">Questions Progress</div>
                 
                 <div class="question-grid" id="questionGrid">
                     <!-- Question grid will be dynamically inserted here -->
                 </div>
                 
-                <button id="retryBtn" style="margin-top: 20px;">Play Again</button>
+                <button id="retryBtn">Play Again</button>
             </div>
+        </div>
+        
+        <div class="controls">
+            <button class="nav-btn" id="prevBtn">← Previous</button>
+            <button id="submitBtn">Check Answer</button>
+            <button class="nav-btn" id="nextBtn">Next →</button>
         </div>
         
         <div id="result">
@@ -556,16 +629,11 @@
     <div class="particles" id="particlesContainer"></div>
 
     <script>
-        // Questions array (60 questions)
+        // جميع الأسئلة الـ 60 كاملة
         const questions = [
             {
                 q: "The first generation of computers used:",
-                options: [
-                    "Transistors",
-                    "Integrated Circuits",
-                    "Vacuum Tubes",
-                    "Microprocessors",
-                ],
+                options: ["Transistors", "Integrated Circuits", "Vacuum Tubes", "Microprocessors"],
                 answer: 2,
                 explanation: "The first generation of computers (1940-1956) used vacuum tubes for circuitry and magnetic drums for memory."
             },
@@ -577,78 +645,43 @@
             },
             {
                 q: "The EDSAC was the first:",
-                options: [
-                    "Transistor-based computer",
-                    "Stored-program computer",
-                    "Personal computer",
-                    "Integrated circuit",
-                ],
+                options: ["Transistor-based computer", "Stored-program computer", "Personal computer", "Integrated circuit"],
                 answer: 1,
                 explanation: "EDSAC (Electronic Delay Storage Automatic Calculator) was the first complete, fully functional stored-program computer."
             },
             {
                 q: "The term 'Harvard Architecture' refers to:",
-                options: [
-                    "Computers using vacuum tubes",
-                    "Unified memory for code and data",
-                    "Separate memories for instructions and data",
-                    "Use of magnetic tapes",
-                ],
+                options: ["Computers using vacuum tubes", "Unified memory for code and data", "Separate memories for instructions and data", "Use of magnetic tapes"],
                 answer: 2,
                 explanation: "Harvard Architecture uses separate storage and signal pathways for instructions and data, improving performance."
             },
             {
                 q: "Von Neumann architecture stores:",
-                options: [
-                    "Data and instructions separately",
-                    "Data and instructions in the same memory",
-                    "Only data",
-                    "Only instructions",
-                ],
+                options: ["Data and instructions separately", "Data and instructions in the same memory", "Only data", "Only instructions"],
                 answer: 1,
                 explanation: "Von Neumann architecture uses a single memory for both data and instructions, which creates the 'Von Neumann bottleneck'."
             },
             {
                 q: "The 'Von Neumann bottleneck' refers to:",
-                options: [
-                    "Slow processors",
-                    "Single bus limitation for data and instructions",
-                    "Lack of transistors",
-                    "Parallel execution",
-                ],
+                options: ["Slow processors", "Single bus limitation for data and instructions", "Lack of transistors", "Parallel execution"],
                 answer: 1,
                 explanation: "The Von Neumann bottleneck is the limitation of throughput between the CPU and memory compared to the amount of memory."
             },
             {
                 q: "The second generation of computers introduced:",
-                options: [
-                    "Vacuum tubes",
-                    "Transistors",
-                    "Microprocessors",
-                    "Optical circuits",
-                ],
+                options: ["Vacuum tubes", "Transistors", "Microprocessors", "Optical circuits"],
                 answer: 1,
                 explanation: "The second generation (1956-1963) used transistors instead of vacuum tubes, making computers smaller, faster, and more reliable."
             },
             {
                 q: "High-level languages like COBOL and FORTRAN appeared during:",
-                options: [
-                    "1st generation",
-                    "2nd generation",
-                    "3rd generation",
-                    "4th generation",
-                ],
+                options: ["1st generation", "2nd generation", "3rd generation", "4th generation"],
                 answer: 1,
                 explanation: "High-level programming languages like COBOL and FORTRAN were developed during the second generation of computers."
             },
             {
                 q: "The first Integrated Circuit was invented by:",
-                options: [
-                    "John von Neumann",
-                    "Jack Kilby",
-                    "Konrad Zuse",
-                    "Howard Aiken",
-                ],
+                options: ["John von Neumann", "Jack Kilby", "Konrad Zuse", "Howard Aiken"],
                 answer: 1,
                 explanation: "Jack Kilby invented the integrated circuit in 1958 while working at Texas Instruments."
             },
@@ -666,12 +699,7 @@
             },
             {
                 q: "The 4th generation is characterized by:",
-                options: [
-                    "Microprocessors and networking",
-                    "Vacuum tubes",
-                    "Magnetic drums",
-                    "Punch cards",
-                ],
+                options: ["Microprocessors and networking", "Vacuum tubes", "Magnetic drums", "Punch cards"],
                 answer: 0,
                 explanation: "The fourth generation (1971-present) is characterized by microprocessors, personal computers, and networking."
             },
@@ -683,45 +711,25 @@
             },
             {
                 q: "The 5th generation aimed to develop:",
-                options: [
-                    "Intelligent machines with parallel processing",
-                    "Simple sequential processors",
-                    "Mainframes with magnetic storage",
-                    "Analog computing systems",
-                ],
+                options: ["Intelligent machines with parallel processing", "Simple sequential processors", "Mainframes with magnetic storage", "Analog computing systems"],
                 answer: 0,
                 explanation: "The fifth generation focused on artificial intelligence, parallel processing, and supercomputing technologies."
             },
             {
                 q: "PSI-I and PIM/p are examples of:",
-                options: [
-                    "Fifth-generation parallel machines",
-                    "Fourth-generation mainframes",
-                    "Third-generation prototypes",
-                    "Harvard-based microcontrollers",
-                ],
+                options: ["Fifth-generation parallel machines", "Fourth-generation mainframes", "Third-generation prototypes", "Harvard-based microcontrollers"],
                 answer: 0,
                 explanation: "PSI-I and PIM/p were experimental parallel inference machines developed during Japan's Fifth Generation Project."
             },
             {
                 q: "The Harvard Architecture is mostly used in:",
-                options: [
-                    "Personal computers",
-                    "Embedded systems and microcontrollers",
-                    "Supercomputers",
-                    "Mainframes",
-                ],
+                options: ["Personal computers", "Embedded systems and microcontrollers", "Supercomputers", "Mainframes"],
                 answer: 1,
                 explanation: "Harvard Architecture is commonly used in embedded systems, DSPs, and microcontrollers where performance is critical."
             },
             {
                 q: "A key limitation of the Von Neumann model is:",
-                options: [
-                    "Instructions and data cannot be fetched simultaneously",
-                    "High component cost",
-                    "No cache memory",
-                    "No operating system",
-                ],
+                options: ["Instructions and data cannot be fetched simultaneously", "High component cost", "No cache memory", "No operating system"],
                 answer: 0,
                 explanation: "In Von Neumann architecture, the same bus is used for both instruction and data fetch, creating a bottleneck."
             },
@@ -733,133 +741,73 @@
             },
             {
                 q: "The main difference between Von Neumann and Harvard architecture lies in:",
-                options: [
-                    "Memory organization",
-                    "Processor design",
-                    "Clock speed",
-                    "Cache size",
-                ],
+                options: ["Memory organization", "Processor design", "Clock speed", "Cache size"],
                 answer: 0,
                 explanation: "Von Neumann uses unified memory for instructions and data, while Harvard uses separate memories."
             },
             {
                 q: "The evolution from serial to parallel architectures mainly began during:",
-                options: [
-                    "2nd generation",
-                    "3rd generation",
-                    "5th generation",
-                    "4th generation",
-                ],
+                options: ["2nd generation", "3rd generation", "5th generation", "4th generation"],
                 answer: 2,
                 explanation: "The fifth generation (1980s) marked the significant shift toward parallel computing architectures."
             },
             {
                 q: "A parallel machine is defined as:",
-                options: [
-                    "A single CPU executing multiple programs",
-                    "A set of processors that cooperate and communicate to execute a parallel program",
-                    "A sequential computer with fast memory",
-                    "A single processor with multiple threads",
-                ],
+                options: ["A single CPU executing multiple programs", "A set of processors that cooperate and communicate to execute a parallel program", "A sequential computer with fast memory", "A single processor with multiple threads"],
                 answer: 1,
                 explanation: "A parallel machine consists of multiple processors working together to solve problems concurrently."
             },
             {
                 q: "A parallel program consists of:",
-                options: [
-                    "A finite set of sequential processes that communicate via message passing",
-                    "Independent processors without communication",
-                    "One sequential process with multiple threads",
-                    "A single stream of data and instructions",
-                ],
+                options: ["A finite set of sequential processes that communicate via message passing", "Independent processors without communication", "One sequential process with multiple threads", "A single stream of data and instructions"],
                 answer: 0,
                 explanation: "Parallel programs are composed of multiple processes that coordinate through communication mechanisms."
             },
             {
                 q: "The performance of a parallel architecture depends on:",
-                options: [
-                    "Only CPU clock speed",
-                    "Latency, throughput, and implementation cost",
-                    "Cache size only",
-                    "Number of registers",
-                ],
+                options: ["Only CPU clock speed", "Latency, throughput, and implementation cost", "Cache size only", "Number of registers"],
                 answer: 1,
                 explanation: "Parallel performance is influenced by multiple factors including latency, throughput, cost, and efficiency."
             },
             {
                 q: "The main reason for parallelism is:",
-                options: [
-                    "Increasing demand for high performance",
-                    "Simplifying software design",
-                    "Reducing power consumption",
-                    "Minimizing hardware cost",
-                ],
+                options: ["Increasing demand for high performance", "Simplifying software design", "Reducing power consumption", "Minimizing hardware cost"],
                 answer: 0,
                 explanation: "Parallelism addresses the need for higher performance beyond what single processors can achieve."
             },
             {
                 q: "Examples of applications requiring parallel computing include:",
-                options: [
-                    "Weather simulation and big data analysis",
-                    "Text editing",
-                    "Web browsing",
-                    "File compression",
-                ],
+                options: ["Weather simulation and big data analysis", "Text editing", "Web browsing", "File compression"],
                 answer: 0,
                 explanation: "Compute-intensive applications like weather forecasting and big data processing benefit greatly from parallel computing."
             },
             {
                 q: "Which of the following is not a characteristic of parallel architectures?",
-                options: [
-                    "Multiple processors",
-                    "Extended memory space",
-                    "Independent processing",
-                    "Single sequential execution",
-                ],
+                options: ["Multiple processors", "Extended memory space", "Independent processing", "Single sequential execution"],
                 answer: 3,
                 explanation: "Parallel architectures execute multiple instructions simultaneously, not sequentially."
             },
             {
                 q: "The performance of parallel architectures can be limited by:",
-                options: [
-                    "Functional and resource dependencies",
-                    "High RAM size",
-                    "Lack of an operating system",
-                    "Fast interconnections",
-                ],
+                options: ["Functional and resource dependencies", "High RAM size", "Lack of an operating system", "Fast interconnections"],
                 answer: 0,
                 explanation: "Dependencies between tasks and limited resources can constrain parallel performance."
             },
             {
                 q: "Flynn's Taxonomy (1966) classifies architectures based on:",
-                options: [
-                    "Instruction stream and data stream",
-                    "Number of transistors",
-                    "Cache hierarchy",
-                    "Processor clock frequency",
-                ],
+                options: ["Instruction stream and data stream", "Number of transistors", "Cache hierarchy", "Processor clock frequency"],
                 answer: 0,
                 explanation: "Flynn's Taxonomy categorizes computers by the number of instruction and data streams."
             },
             {
                 q: "The SISD model corresponds to:",
-                options: [
-                    "The Von Neumann architecture",
-                    "A GPU system",
-                    "Distributed memory clusters",
-                    "Multithreaded superscalar CPUs",
-                ],
+                options: ["The Von Neumann architecture", "A GPU system", "Distributed memory clusters", "Multithreaded superscalar CPUs"],
                 answer: 0,
                 explanation: "SISD (Single Instruction, Single Data) represents traditional sequential Von Neumann architecture."
             },
             {
                 q: "SIMD architecture executes:",
-                options: [
-                    "The same instruction on multiple data elements",
-                    "Different instructions on the same data",
-                    "Different instructions on different data",
-                    "One instruction on one data",
-                ],
+                options: ["The same instruction on multiple data elements", "Different instructions on the same data", "Different instructions on different data", "One instruction on one data"],
                 answer: 0,
                 explanation: "SIMD applies one instruction to multiple data elements simultaneously, ideal for vector processing."
             },
@@ -871,144 +819,79 @@
             },
             {
                 q: "SIMD architecture is especially efficient for:",
-                options: [
-                    "Data-parallel problems such as vectors and matrices",
-                    "Text processing",
-                    "Irregular control flows",
-                    "Symbolic AI programs",
-                ],
+                options: ["Data-parallel problems such as vectors and matrices", "Text processing", "Irregular control flows", "Symbolic AI programs"],
                 answer: 0,
                 explanation: "SIMD excels at regular, data-parallel computations like vector and matrix operations."
             },
             {
                 q: "A disadvantage of SIMD systems is:",
-                options: [
-                    "Poor performance with varied instructions",
-                    "High control overhead",
-                    "No synchronization",
-                    "Expensive interconnections",
-                ],
+                options: ["Poor performance with varied instructions", "High control overhead", "No synchronization", "Expensive interconnections"],
                 answer: 0,
                 explanation: "SIMD performs poorly when different processing elements need to execute different instructions."
             },
             {
                 q: "MISD architecture is considered:",
-                options: [
-                    "A theoretical model (rarely implemented)",
-                    "A common GPU model",
-                    "A Von Neumann system",
-                    "A type of distributed system",
-                ],
+                options: ["A theoretical model (rarely implemented)", "A common GPU model", "A Von Neumann system", "A type of distributed system"],
                 answer: 0,
                 explanation: "MISD is primarily a theoretical classification with few practical implementations."
             },
             {
                 q: "In an MISD architecture:",
-                options: [
-                    "Multiple instructions operate on the same data stream",
-                    "A single instruction operates on multiple data streams",
-                    "Multiple instructions operate on multiple data streams",
-                    "A single instruction operates on a single data stream",
-                ],
+                options: ["Multiple instructions operate on the same data stream", "A single instruction operates on multiple data streams", "Multiple instructions operate on multiple data streams", "A single instruction operates on a single data stream"],
                 answer: 0,
                 explanation: "MISD applies multiple different instructions to the same data stream."
             },
             {
                 q: "MIMD architecture involves:",
-                options: [
-                    "Different instruction streams operating on different data",
-                    "Same instruction on different data",
-                    "Single instruction, single data",
-                    "Multiple processors with no communication",
-                ],
+                options: ["Different instruction streams operating on different data", "Same instruction on different data", "Single instruction, single data", "Multiple processors with no communication"],
                 answer: 0,
                 explanation: "MIMD allows each processor to execute different instructions on different data."
             },
             {
                 q: "Shared-memory MIMD systems are also known as:",
-                options: [
-                    "Symmetric Multiprocessors (SMP)",
-                    "Clusters",
-                    "SIMD systems",
-                    "NORMA systems",
-                ],
+                options: ["Symmetric Multiprocessors (SMP)", "Clusters", "SIMD systems", "NORMA systems"],
                 answer: 0,
                 explanation: "SMP systems have multiple processors sharing a common memory space."
             },
             {
                 q: "According to Raina's classification, DADM refers to:",
-                options: [
-                    "Distributed Address space, Distributed Memory",
-                    "Distributed Access, Dynamic Memory",
-                    "Direct Address, Distributed Module",
-                    "Data Accessed Directly from Memory",
-                ],
+                options: ["Distributed Address space, Distributed Memory", "Distributed Access, Dynamic Memory", "Direct Address, Distributed Module", "Data Accessed Directly from Memory"],
                 answer: 0,
                 explanation: "DADM systems have distributed memory with separate address spaces for each processor."
             },
             {
                 q: "NUMA stands for:",
-                options: [
-                    "Non-Uniform Memory Access",
-                    "Normal Unified Memory Access",
-                    "Non-Universal Memory Allocation",
-                    "Non-User Memory Array",
-                ],
+                options: ["Non-Uniform Memory Access", "Normal Unified Memory Access", "Non-Universal Memory Allocation", "Non-User Memory Array"],
                 answer: 0,
                 explanation: "NUMA architecture has varying memory access times depending on memory location."
             },
             {
                 q: "In COMA (Cache-Only Memory Access):",
-                options: [
-                    "Local memories behave like caches, and data migrates dynamically",
-                    "All processors share one single global memory",
-                    "Each processor has isolated memory with no communication",
-                    "Memory is accessed only by the OS",
-                ],
+                options: ["Local memories behave like caches, and data migrates dynamically", "All processors share one single global memory", "Each processor has isolated memory with no communication", "Memory is accessed only by the OS"],
                 answer: 0,
                 explanation: "COMA systems use local memories as caches that automatically migrate data where needed."
             },
             {
                 q: "Which architectural concept directly addresses the Von Neumann bottleneck?",
-                options: [
-                    "Cache memory",
-                    "Instruction pipelining",
-                    "Parallel memory systems",
-                    "Clock synchronization",
-                ],
+                options: ["Cache memory", "Instruction pipelining", "Parallel memory systems", "Clock synchronization"],
                 answer: 2,
                 explanation: "Parallel memory systems allow simultaneous access to multiple memory locations, reducing the bottleneck."
             },
             {
                 q: "If doubling the number of processors yields only 1.6x speedup, what phenomenon is being observed?",
-                options: [
-                    "Perfect scalability",
-                    "Amdahl's limitation",
-                    "Load balancing",
-                    "Synchronization overhead",
-                ],
+                options: ["Perfect scalability", "Amdahl's limitation", "Load balancing", "Synchronization overhead"],
                 answer: 1,
                 explanation: "Amdahl's Law describes how the serial portion of a program limits maximum speedup."
             },
             {
                 q: "Which statement best describes Amdahl's Law?",
-                options: [
-                    "Performance improves linearly with processors",
-                    "Speedup is limited by the serial fraction of the program",
-                    "Parallelism eliminates latency completely",
-                    "Performance depends only on hardware",
-                ],
+                options: ["Performance improves linearly with processors", "Speedup is limited by the serial fraction of the program", "Parallelism eliminates latency completely", "Performance depends only on hardware"],
                 answer: 1,
                 explanation: "Amdahl's Law states that speedup is constrained by the sequential part of a program."
             },
             {
                 q: "In a shared-memory MIMD system, the main challenge is:",
-                options: [
-                    "Lack of communication",
-                    "Synchronization and data consistency",
-                    "Excessive instruction fetches",
-                    "No interconnection network",
-                ],
+                options: ["Lack of communication", "Synchronization and data consistency", "Excessive instruction fetches", "No interconnection network"],
                 answer: 1,
                 explanation: "Maintaining data consistency across multiple processors accessing shared memory is challenging."
             },
@@ -1020,12 +903,7 @@
             },
             {
                 q: "Which of the following best explains scalability?",
-                options: [
-                    "Ability to maintain performance when adding processors",
-                    "Speed of a single CPU",
-                    "Memory capacity of a system",
-                    "Energy efficiency",
-                ],
+                options: ["Ability to maintain performance when adding processors", "Speed of a single CPU", "Memory capacity of a system", "Energy efficiency"],
                 answer: 0,
                 explanation: "Scalability measures how well a system maintains performance as resources increase."
             },
@@ -1037,89 +915,49 @@
             },
             {
                 q: "In SIMD systems, what limits efficiency when processing non-uniform data?",
-                options: [
-                    "Divergent control flow",
-                    "High throughput",
-                    "Synchronization",
-                    "Shared memory",
-                ],
+                options: ["Divergent control flow", "High throughput", "Synchronization", "Shared memory"],
                 answer: 0,
                 explanation: "Divergent control flow forces some processors to idle while others execute different paths."
             },
             {
                 q: "Why might NUMA outperform UMA for large-scale systems?",
-                options: [
-                    "Uniform latency",
-                    "Local memory access optimization",
-                    "Less synchronization",
-                    "Higher clock speeds",
-                ],
+                options: ["Uniform latency", "Local memory access optimization", "Less synchronization", "Higher clock speeds"],
                 answer: 1,
                 explanation: "NUMA reduces average memory access time by keeping frequently accessed data local."
             },
             {
                 q: "When two processors try to update the same memory location simultaneously, the issue is known as:",
-                options: [
-                    "Data hazard",
-                    "Race condition",
-                    "Deadlock",
-                    "Instruction stall",
-                ],
+                options: ["Data hazard", "Race condition", "Deadlock", "Instruction stall"],
                 answer: 1,
                 explanation: "Race conditions occur when multiple processors access shared data without proper synchronization."
             },
             {
                 q: "Which of the following improves memory coherence in parallel architectures?",
-                options: [
-                    "Directory-based protocol",
-                    "Instruction pipelining",
-                    "Static scheduling",
-                    "Branch prediction",
-                ],
+                options: ["Directory-based protocol", "Instruction pipelining", "Static scheduling", "Branch prediction"],
                 answer: 0,
                 explanation: "Directory-based protocols track sharing status to maintain cache coherence."
             },
             {
                 q: "The main factor that distinguishes MIMD from SIMD is:",
-                options: [
-                    "Number of cores",
-                    "Instruction diversity per processor",
-                    "Memory size",
-                    "Bus structure",
-                ],
+                options: ["Number of cores", "Instruction diversity per processor", "Memory size", "Bus structure"],
                 answer: 1,
                 explanation: "MIMD allows different instructions per processor, while SIMD requires uniform instructions."
             },
             {
                 q: "If a task can only start when another finishes, it indicates:",
-                options: [
-                    "Data parallelism",
-                    "Task dependency",
-                    "Load balancing",
-                    "Pipeline stage",
-                ],
+                options: ["Data parallelism", "Task dependency", "Load balancing", "Pipeline stage"],
                 answer: 1,
                 explanation: "Task dependencies create ordering constraints in parallel execution."
             },
             {
                 q: "A program exhibits good parallelism if:",
-                options: [
-                    "Communication overhead is high",
-                    "Sequential part dominates execution",
-                    "Speedup increases with processors",
-                    "It runs slower with more processors",
-                ],
+                options: ["Communication overhead is high", "Sequential part dominates execution", "Speedup increases with processors", "It runs slower with more processors"],
                 answer: 2,
                 explanation: "Good parallelism shows improved performance as more processors are added."
             },
             {
                 q: "In a parallel matrix multiplication, each processor computes part of the result matrix. This is an example of:",
-                options: [
-                    "Task parallelism",
-                    "Data parallelism",
-                    "Pipeline parallelism",
-                    "Control parallelism",
-                ],
+                options: ["Task parallelism", "Data parallelism", "Pipeline parallelism", "Control parallelism"],
                 answer: 1,
                 explanation: "Data parallelism divides the data across processors performing the same operation."
             },
@@ -1131,61 +969,65 @@
             },
             {
                 q: "In a pipeline processor, throughput increases because:",
-                options: [
-                    "Instructions execute sequentially",
-                    "Multiple instructions overlap in execution",
-                    "Clock speed is increased",
-                    "Instructions are shorter",
-                ],
+                options: ["Instructions execute sequentially", "Multiple instructions overlap in execution", "Clock speed is increased", "Instructions are shorter"],
                 answer: 1,
                 explanation: "Pipelining increases throughput by executing multiple instructions concurrently in different stages."
             },
             {
                 q: "The main drawback of fine-grain parallelism is:",
-                options: [
-                    "High synchronization overhead",
-                    "Low concurrency",
-                    "Excessive memory usage",
-                    "Inflexibility",
-                ],
+                options: ["High synchronization overhead", "Low concurrency", "Excessive memory usage", "Inflexibility"],
                 answer: 0,
                 explanation: "Fine-grain parallelism requires frequent synchronization, increasing overhead."
             },
             {
                 q: "If a task requires frequent global communication, it performs best on:",
-                options: [
-                    "Distributed memory system",
-                    "Shared memory system",
-                    "NUMA system",
-                    "Cloud cluster",
-                ],
+                options: ["Distributed memory system", "Shared memory system", "NUMA system", "Cloud cluster"],
                 answer: 1,
                 explanation: "Shared memory systems provide faster global communication through shared address space."
             },
             {
                 q: "When workload is unevenly distributed among processors, the issue is called:",
-                options: [
-                    "Load imbalance",
-                    "Latency hiding",
-                    "Data redundancy",
-                    "Task dependency",
-                ],
+                options: ["Load imbalance", "Latency hiding", "Data redundancy", "Task dependency"],
                 answer: 0,
                 explanation: "Load imbalance occurs when some processors have more work than others, reducing efficiency."
+            },
+            {
+                q: "What is the primary advantage of using multiple processors in parallel architecture?",
+                options: ["Reduced power consumption", "Increased computational speed", "Simpler programming model", "Lower hardware costs"],
+                answer: 1,
+                explanation: "The main advantage of parallel architectures is significantly increased computational speed through concurrent processing."
+            },
+            {
+                q: "In distributed memory systems, processors communicate through:",
+                options: ["Shared variables", "Message passing", "Global cache", "Bus arbitration"],
+                answer: 1,
+                explanation: "Distributed memory systems use message passing for inter-processor communication since they don't share memory."
+            },
+            {
+                q: "Which programming model is most commonly used with shared memory architectures?",
+                options: ["MPI", "OpenMP", "PVM", "CUDA"],
+                answer: 1,
+                explanation: "OpenMP is widely used for shared memory programming due to its simplicity and direct support for shared memory constructs."
+            },
+            {
+                q: "What is the purpose of cache coherence protocols in shared memory systems?",
+                options: ["To increase cache size", "To ensure data consistency across caches", "To reduce memory latency", "To improve processor clock speed"],
+                answer: 1,
+                explanation: "Cache coherence protocols maintain data consistency when multiple processors cache the same memory location."
             }
         ];
 
         // Game variables
         let currentQuestionIndex = 0;
         let userAnswers = new Array(questions.length).fill(null);
-        let userAnswerStatus = new Array(questions.length).fill(null); // null, 'correct', or 'wrong'
+        let userAnswerStatus = new Array(questions.length).fill(null);
         let score = 0;
         let correctCount = 0;
         let currentStreak = 0;
         let level = 1;
         let xp = 0;
         let xpToNextLevel = 100;
-        let timeLeft = 300; // 5 minutes in seconds
+        let timeLeft = 300;
         let timerInterval;
         let gameActive = true;
 
@@ -1207,7 +1049,6 @@
         const submitBtn = document.getElementById('submitBtn');
         const retryBtn = document.getElementById('retryBtn');
         const resultDiv = document.getElementById('result');
-        const particlesContainer = document.getElementById('particlesContainer');
 
         // Initialize the game
         function initGame() {
@@ -1240,18 +1081,50 @@
                     resetOptionStyles();
                 }
             });
+
+            // Swipe support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0 && currentQuestionIndex < questions.length - 1) {
+                        // Swipe left - next question
+                        currentQuestionIndex++;
+                    } else if (diff < 0 && currentQuestionIndex > 0) {
+                        // Swipe right - previous question
+                        currentQuestionIndex--;
+                    }
+                    displayQuestion(currentQuestionIndex);
+                    updateNavigationButtons();
+                    updateQuestionGrid();
+                    resetOptionStyles();
+                }
+            }
         }
 
         // Create question grid
         function createQuestionGrid() {
             questionGrid.innerHTML = '';
-            questions.forEach((_, index) => {
+            for (let i = 0; i < questions.length; i++) {
                 const gridItem = document.createElement('div');
                 gridItem.classList.add('grid-item');
-                gridItem.textContent = index + 1;
+                gridItem.textContent = i + 1;
                 gridItem.addEventListener('click', () => {
                     if (gameActive) {
-                        currentQuestionIndex = index;
+                        currentQuestionIndex = i;
                         displayQuestion(currentQuestionIndex);
                         updateNavigationButtons();
                         updateQuestionGrid();
@@ -1259,7 +1132,7 @@
                     }
                 });
                 questionGrid.appendChild(gridItem);
-            });
+            }
             updateQuestionGrid();
         }
 
@@ -1304,12 +1177,9 @@
                 
                 optionBtn.addEventListener('click', () => {
                     if (gameActive && userAnswerStatus[index] === null) {
-                        // Deselect all options
                         document.querySelectorAll('.option-btn').forEach(btn => {
                             btn.classList.remove('selected');
                         });
-                        
-                        // Select this option
                         optionBtn.classList.add('selected');
                         userAnswers[index] = i;
                         updateQuestionGrid();
@@ -1319,18 +1189,16 @@
                 optionsGrid.appendChild(optionBtn);
             });
             
-            // Show/hide feedback
             if (userAnswerStatus[index] !== null) {
                 showFeedback(index);
             } else {
                 feedback.style.display = 'none';
             }
             
-            // Update progress bar
             updateProgress();
         }
 
-        // Reset option styles for a new question
+        // Reset option styles
         function resetOptionStyles() {
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.classList.remove('correct', 'wrong');
@@ -1338,7 +1206,7 @@
             feedback.style.display = 'none';
         }
 
-        // Check the selected answer
+        // Check answer
         function checkAnswer() {
             if (userAnswers[currentQuestionIndex] === null) {
                 feedback.textContent = "Please select an answer first!";
@@ -1350,36 +1218,21 @@
             const isCorrect = userAnswers[currentQuestionIndex] === questions[currentQuestionIndex].answer;
             userAnswerStatus[currentQuestionIndex] = isCorrect ? 'correct' : 'wrong';
             
-            // Update score and stats
             if (isCorrect) {
                 score += 10;
                 correctCount++;
                 currentStreak++;
-                
-                // Bonus for streaks
-                if (currentStreak >= 3) {
-                    score += currentStreak * 5;
-                }
-                
-                // Add XP
+                if (currentStreak >= 3) score += currentStreak * 5;
                 xp += 10 + (currentStreak * 2);
-                
-                // Check for level up
-                if (xp >= xpToNextLevel) {
-                    levelUp();
-                }
+                if (xp >= xpToNextLevel) levelUp();
             } else {
                 currentStreak = 0;
             }
             
-            // Show feedback
             showFeedback(currentQuestionIndex);
-            
-            // Update UI
             updateStats();
             updateQuestionGrid();
             
-            // Auto-advance after a short delay if not the last question
             if (currentQuestionIndex < questions.length - 1) {
                 setTimeout(() => {
                     currentQuestionIndex++;
@@ -1389,20 +1242,16 @@
                     resetOptionStyles();
                 }, 2000);
             } else {
-                // Last question - check if all are answered
                 const allAnswered = userAnswers.every(answer => answer !== null);
-                if (allAnswered) {
-                    endGame();
-                }
+                if (allAnswered) endGame();
             }
         }
 
-        // Show feedback for the current question
+        // Show feedback
         function showFeedback(index) {
             const isCorrect = userAnswerStatus[index] === 'correct';
             const question = questions[index];
             
-            // Style the options
             document.querySelectorAll('.option-btn').forEach((btn, i) => {
                 if (i === question.answer) {
                     btn.classList.add('correct');
@@ -1411,10 +1260,9 @@
                 }
             });
             
-            // Show feedback message
             feedback.textContent = isCorrect 
                 ? `✓ Correct! ${question.explanation}` 
-                : `✗ Incorrect. The correct answer is: ${question.options[question.answer]}. ${question.explanation}`;
+                : `✗ Incorrect. Correct: ${question.options[question.answer]}. ${question.explanation}`;
             
             feedback.classList.remove('correct', 'wrong');
             feedback.classList.add(isCorrect ? 'correct' : 'wrong');
@@ -1426,9 +1274,8 @@
             prevBtn.disabled = currentQuestionIndex === 0;
             nextBtn.disabled = currentQuestionIndex === questions.length - 1;
             
-            // Change submit button text if already answered
             if (userAnswerStatus[currentQuestionIndex] !== null) {
-                submitBtn.textContent = "Already Answered";
+                submitBtn.textContent = "Answered";
                 submitBtn.disabled = true;
             } else {
                 submitBtn.textContent = "Check Answer";
@@ -1436,81 +1283,64 @@
             }
         }
 
-        // Update game stats
+        // Update stats
         function updateStats() {
             scoreElement.textContent = score;
             correctCountElement.textContent = correctCount;
             streakElement.textContent = currentStreak;
             levelElement.textContent = level;
             
-            // Update XP progress
             const xpPercent = (xp / xpToNextLevel) * 100;
             xpProgress.style.width = `${xpPercent}%`;
             
-            // Update level name based on level
             const levelNames = ["Novice", "Learner", "Apprentice", "Adept", "Expert", "Master"];
             levelNameElement.textContent = levelNames[Math.min(level - 1, levelNames.length - 1)];
             
-            // Update progress bar
             updateProgress();
         }
 
-        // Update progress bar
+        // Update progress
         function updateProgress() {
             const answeredCount = userAnswers.filter(answer => answer !== null).length;
             const progress = (answeredCount / questions.length) * 100;
             progressBar.style.width = `${progress}%`;
         }
 
-        // Level up function
+        // Level up
         function levelUp() {
             level++;
             xp = xp - xpToNextLevel;
             xpToNextLevel = Math.floor(xpToNextLevel * 1.5);
-            
-            // Show level up message
-            feedback.textContent = `🎉 Level Up! You've reached Level ${level}!`;
+            feedback.textContent = `🎉 Level Up! Level ${level}!`;
             feedback.classList.remove('correct', 'wrong');
             feedback.style.display = 'block';
-            
-            // Add bonus points for leveling up
             score += 50;
             updateStats();
         }
 
-        // Start the timer
+        // Timer functions
         function startTimer() {
             updateTimerDisplay();
             timerInterval = setInterval(() => {
                 timeLeft--;
                 updateTimerDisplay();
-                
-                if (timeLeft <= 0) {
-                    endGame();
-                }
+                if (timeLeft <= 0) endGame();
             }, 1000);
         }
 
-        // Update timer display
         function updateTimerDisplay() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            // Change color when time is running out
-            if (timeLeft < 60) {
-                timerElement.style.color = '#e74c3c';
-            }
+            if (timeLeft < 60) timerElement.style.color = '#e74c3c';
         }
 
-        // End the game
+        // End game
         function endGame() {
             gameActive = false;
             clearInterval(timerInterval);
             
-            const answeredCount = userAnswers.filter(answer => answer !== null).length;
             const percentage = Math.round((correctCount / questions.length) * 100);
-            
             let message = '';
             let achievement = '';
             
@@ -1518,13 +1348,13 @@
                 message = 'Outstanding! You are a parallel architectures expert!';
                 achievement = '🏆 Master Architect - Perfect score!';
             } else if (percentage >= 70) {
-                message = 'Great job! You have a solid understanding of parallel architectures.';
+                message = 'Great job! Solid understanding of parallel architectures.';
                 achievement = '⭐ Skilled Learner - Well done!';
             } else if (percentage >= 50) {
-                message = 'Good effort! Review the material to improve your knowledge.';
+                message = 'Good effort! Review to improve your knowledge.';
                 achievement = '📚 Dedicated Student - Keep learning!';
             } else {
-                message = 'Keep studying! You\'ll get better with more practice.';
+                message = 'Keep studying! You will improve with practice.';
                 achievement = '🌱 Budding Learner - Every expert was once a beginner!';
             }
             
@@ -1538,19 +1368,16 @@
                 <p>${message}</p>
             `;
             resultDiv.style.display = 'block';
-            
             submitBtn.style.display = 'none';
             retryBtn.style.display = 'block';
-            
-            // Scroll to results
             resultDiv.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Reset the game
+        // Reset game
         function resetGame() {
             currentQuestionIndex = 0;
-            userAnswers = new Array(questions.length).fill(null);
-            userAnswerStatus = new Array(questions.length).fill(null);
+            userAnswers.fill(null);
+            userAnswerStatus.fill(null);
             score = 0;
             correctCount = 0;
             currentStreak = 0;
@@ -1569,32 +1396,27 @@
             updateQuestionGrid();
             updateStats();
             startTimer();
-            
-            // Reset timer color
             timerElement.style.color = '';
         }
 
-        // Create particles for background
+        // Create particles
         function createParticles() {
-            for (let i = 0; i < 30; i++) {
+            const particlesContainer = document.getElementById('particlesContainer');
+            for (let i = 0; i < 20; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                
-                const size = Math.random() * 10 + 5;
+                const size = Math.random() * 8 + 4;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
-                
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.top = `${Math.random() * 100}%`;
-                
                 particle.style.animationDelay = `${Math.random() * 15}s`;
                 particle.style.animationDuration = `${15 + Math.random() * 10}s`;
-                
                 particlesContainer.appendChild(particle);
             }
         }
 
-        // Start the game when page loads
+        // Start game
         window.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
