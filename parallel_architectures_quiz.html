@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parallel Architectures - Full Interactive Quiz</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 950px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+      }
+      .question {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #fafafa;
+        border-radius: 8px;
+      }
+      .question h3 {
+        margin-bottom: 10px;
+        color: #34495e;
+      }
+      .option {
+        margin: 5px 0;
+      }
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      #result {
+        font-size: 1.2em;
+        margin-top: 20px;
+        text-align: center;
+      }
+      .correct {
+        color: green;
+      }
+      .wrong {
+        color: red;
+      }
+      .answer {
+        margin-top: 5px;
+        font-style: italic;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Parallel Architectures - Chapters 1 & 2 Full Quiz</h1>
+      <form id="quizForm"></form>
+      <button type="button" onclick="submitQuiz()">Submit Answers</button>
+      <button
+        type="button"
+        id="retryBtn"
+        style="display: none; background: #2ecc71"
+      >
+        Retry
+      </button>
+      <div id="result"></div>
+    </div>
+
+    <script>
+      const questions = [
+        // Chapter 1 (20 questions)
+        {
+          q: "The first generation of computers used:",
+          options: [
+            "Transistors",
+            "Integrated Circuits",
+            "Vacuum Tubes",
+            "Microprocessors",
+          ],
+          answer: 2,
+        },
+        {
+          q: "The ENIAC was completed in:",
+          options: ["1951", "1944", "1948", "1957"],
+          answer: 1,
+        },
+        {
+          q: "The EDSAC was the first:",
+          options: [
+            "Transistor-based computer",
+            "Stored-program computer",
+            "Personal computer",
+            "Integrated circuit",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The term “Harvard Architecture” refers to:",
+          options: [
+            "Computers using vacuum tubes",
+            "Unified memory for code and data",
+            "Separate memories for instructions and data",
+            "Use of magnetic tapes",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Von Neumann architecture stores:",
+          options: [
+            "Data and instructions separately",
+            "Data and instructions in the same memory",
+            "Only data",
+            "Only instructions",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The “Von Neumann bottleneck” refers to:",
+          options: [
+            "Slow processors",
+            "Single bus limitation for data and instructions",
+            "Lack of transistors",
+            "Parallel execution",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The second generation of computers introduced:",
+          options: [
+            "Vacuum tubes",
+            "Transistors",
+            "Microprocessors",
+            "Optical circuits",
+          ],
+          answer: 1,
+        },
+        {
+          q: "High-level languages like COBOL and FORTRAN appeared during:",
+          options: [
+            "1st generation",
+            "2nd generation",
+            "3rd generation",
+            "4th generation",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The first Integrated Circuit was invented by:",
+          options: [
+            "John von Neumann",
+            "Jack Kilby",
+            "Konrad Zuse",
+            "Howard Aiken",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The first computer using Integrated Circuits was:",
+          options: ["IBM 360", "Intel 4004", "ENIAC", "UNIVAC I"],
+          answer: 0,
+        },
+        {
+          q: "The first microprocessor was:",
+          options: ["Intel 4004", "IBM PC", "LARC", "Mark I"],
+          answer: 0,
+        },
+        {
+          q: "The 4th generation is characterized by:",
+          options: [
+            "Microprocessors and networking",
+            "Vacuum tubes",
+            "Magnetic drums",
+            "Punch cards",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The Japanese 5th Generation Project started in:",
+          options: ["1982", "1971", "1958", "1992"],
+          answer: 0,
+        },
+        {
+          q: "The 5th generation aimed to develop:",
+          options: [
+            "Intelligent machines with parallel processing",
+            "Simple sequential processors",
+            "Mainframes with magnetic storage",
+            "Analog computing systems",
+          ],
+          answer: 0,
+        },
+        {
+          q: "“PSI-I” and “PIM/p” are examples of:",
+          options: [
+            "Fifth-generation parallel machines",
+            "Fourth-generation mainframes",
+            "Third-generation prototypes",
+            "Harvard-based microcontrollers",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The Harvard Architecture is mostly used in:",
+          options: [
+            "Personal computers",
+            "Embedded systems and microcontrollers",
+            "Supercomputers",
+            "Mainframes",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A key limitation of the Von Neumann model is:",
+          options: [
+            "Instructions and data cannot be fetched simultaneously",
+            "High component cost",
+            "No cache memory",
+            "No operating system",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The first personal computer was introduced by IBM in:",
+          options: ["1981", "1971", "1965", "1992"],
+          answer: 0,
+        },
+        {
+          q: "The main difference between Von Neumann and Harvard architecture lies in:",
+          options: [
+            "Memory organization",
+            "Processor design",
+            "Clock speed",
+            "Cache size",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The evolution from serial to parallel architectures mainly began during:",
+          options: [
+            "2nd generation",
+            "3rd generation",
+            "5th generation",
+            "4th generation",
+          ],
+          answer: 2,
+        },
+
+        // Chapter 2 (20 questions)
+        {
+          q: "A parallel machine is defined as:",
+          options: [
+            "A single CPU executing multiple programs",
+            "A set of processors that cooperate and communicate to execute a parallel program",
+            "A sequential computer with fast memory",
+            "A single processor with multiple threads",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A parallel program consists of:",
+          options: [
+            "A finite set of sequential processes that communicate via message passing",
+            "Independent processors without communication",
+            "One sequential process with multiple threads",
+            "A single stream of data and instructions",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The performance of a parallel architecture depends on:",
+          options: [
+            "Only CPU clock speed",
+            "Latency, throughput, and implementation cost",
+            "Cache size only",
+            "Number of registers",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The main reason for parallelism is:",
+          options: [
+            "Increasing demand for high performance",
+            "Simplifying software design",
+            "Reducing power consumption",
+            "Minimizing hardware cost",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Examples of applications requiring parallel computing include:",
+          options: [
+            "Weather simulation and big data analysis",
+            "Text editing",
+            "Web browsing",
+            "File compression",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Which of the following is not a characteristic of parallel architectures?",
+          options: [
+            "Multiple processors",
+            "Extended memory space",
+            "Independent processing",
+            "Single sequential execution",
+          ],
+          answer: 3,
+        },
+        {
+          q: "The performance of parallel architectures can be limited by:",
+          options: [
+            "Functional and resource dependencies",
+            "High RAM size",
+            "Lack of an operating system",
+            "Fast interconnections",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Flynn’s Taxonomy (1966) classifies architectures based on:",
+          options: [
+            "Instruction stream and data stream",
+            "Number of transistors",
+            "Cache hierarchy",
+            "Processor clock frequency",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The SISD model corresponds to:",
+          options: [
+            "The Von Neumann architecture",
+            "A GPU system",
+            "Distributed memory clusters",
+            "Multithreaded superscalar CPUs",
+          ],
+          answer: 0,
+        },
+        {
+          q: "SIMD architecture executes:",
+          options: [
+            "The same instruction on multiple data elements",
+            "Different instructions on the same data",
+            "Different instructions on different data",
+            "One instruction on one data",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The first SIMD computer was:",
+          options: ["ILLIAC IV", "IBM 360", "Intel 4004", "ENIAC"],
+          answer: 0,
+        },
+        {
+          q: "SIMD architecture is especially efficient for:",
+          options: [
+            "Data-parallel problems such as vectors and matrices",
+            "Text processing",
+            "Irregular control flows",
+            "Symbolic AI programs",
+          ],
+          answer: 0,
+        },
+        {
+          q: "A disadvantage of SIMD systems is:",
+          options: [
+            "Poor performance with varied instructions",
+            "High control overhead",
+            "No synchronization",
+            "Expensive interconnections",
+          ],
+          answer: 0,
+        },
+        {
+          q: "MISD architecture is considered:",
+          options: [
+            "A theoretical model (rarely implemented)",
+            "A common GPU model",
+            "A Von Neumann system",
+            "A type of distributed system",
+          ],
+          answer: 0,
+        },
+        {
+          q: "In an MISD architecture:",
+          options: [
+            "Multiple instructions operate on the same data stream",
+            "A single instruction operates on multiple data streams",
+            "Multiple instructions operate on multiple data streams",
+            "A single instruction operates on a single data stream",
+          ],
+          answer: 0,
+        },
+        {
+          q: "MIMD architecture involves:",
+          options: [
+            "Different instruction streams operating on different data",
+            "Same instruction on different data",
+            "Single instruction, single data",
+            "Multiple processors with no communication",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Shared-memory MIMD systems are also known as:",
+          options: [
+            "Symmetric Multiprocessors (SMP)",
+            "Clusters",
+            "SIMD systems",
+            "NORMA systems",
+          ],
+          answer: 0,
+        },
+        {
+          q: "According to Raina’s classification, DADM refers to:",
+          options: [
+            "Distributed Address space, Distributed Memory",
+            "Distributed Access, Dynamic Memory",
+            "Direct Address, Distributed Module",
+            "Data Accessed Directly from Memory",
+          ],
+          answer: 0,
+        },
+        {
+          q: "NUMA stands for:",
+          options: [
+            "Non-Uniform Memory Access",
+            "Normal Unified Memory Access",
+            "Non-Universal Memory Allocation",
+            "Non-User Memory Array",
+          ],
+          answer: 0,
+        },
+        {
+          q: "In COMA (Cache-Only Memory Access):",
+          options: [
+            "Local memories behave like caches, and data migrates dynamically",
+            "All processors share one single global memory",
+            "Each processor has isolated memory with no communication",
+            "Memory is accessed only by the OS",
+          ],
+          answer: 0,
+        },
+      ];
+
+      // Additional questions added by user (20 questions)
+      questions.push(
+        {
+          q: "Which architectural concept directly addresses the Von Neumann bottleneck?",
+          options: [
+            "Cache memory",
+            "Instruction pipelining",
+            "Parallel memory systems",
+            "Clock synchronization",
+          ],
+          answer: 2,
+        },
+        {
+          q: "If doubling the number of processors yields only 1.6x speedup, what phenomenon is being observed?",
+          options: [
+            "Perfect scalability",
+            "Amdahl’s limitation",
+            "Load balancing",
+            "Synchronization overhead",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which statement best describes Amdahl’s Law?",
+          options: [
+            "Performance improves linearly with processors",
+            "Speedup is limited by the serial fraction of the program",
+            "Parallelism eliminates latency completely",
+            "Performance depends only on hardware",
+          ],
+          answer: 1,
+        },
+        {
+          q: "In a shared-memory MIMD system, the main challenge is:",
+          options: [
+            "Lack of communication",
+            "Synchronization and data consistency",
+            "Excessive instruction fetches",
+            "No interconnection network",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A system using message passing rather than shared memory is likely to be:",
+          options: ["SMP", "Cluster", "NUMA", "COMA"],
+          answer: 1,
+        },
+        {
+          q: "Which of the following best explains scalability?",
+          options: [
+            "Ability to maintain performance when adding processors",
+            "Speed of a single CPU",
+            "Memory capacity of a system",
+            "Energy efficiency",
+          ],
+          answer: 0,
+        },
+        {
+          q: "If a parallel program has 80% parallel portion, the theoretical maximum speedup (Amdahl) with infinite processors is:",
+          options: ["5x", "10x", "4x", "∞"],
+          answer: 2,
+        },
+        {
+          q: "In SIMD systems, what limits efficiency when processing non-uniform data?",
+          options: [
+            "Divergent control flow",
+            "High throughput",
+            "Synchronization",
+            "Shared memory",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Why might NUMA outperform UMA for large-scale systems?",
+          options: [
+            "Uniform latency",
+            "Local memory access optimization",
+            "Less synchronization",
+            "Higher clock speeds",
+          ],
+          answer: 1,
+        },
+        {
+          q: "When two processors try to update the same memory location simultaneously, the issue is known as:",
+          options: [
+            "Data hazard",
+            "Race condition",
+            "Deadlock",
+            "Instruction stall",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following improves memory coherence in parallel architectures?",
+          options: [
+            "Directory-based protocol",
+            "Instruction pipelining",
+            "Static scheduling",
+            "Branch prediction",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The main factor that distinguishes MIMD from SIMD is:",
+          options: [
+            "Number of cores",
+            "Instruction diversity per processor",
+            "Memory size",
+            "Bus structure",
+          ],
+          answer: 1,
+        },
+        {
+          q: "If a task can only start when another finishes, it indicates:",
+          options: [
+            "Data parallelism",
+            "Task dependency",
+            "Load balancing",
+            "Pipeline stage",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A program exhibits good parallelism if:",
+          options: [
+            "Communication overhead is high",
+            "Sequential part dominates execution",
+            "Speedup increases with processors",
+            "It runs slower with more processors",
+          ],
+          answer: 2,
+        },
+        {
+          q: "In a parallel matrix multiplication, each processor computes part of the result matrix. This is an example of:",
+          options: [
+            "Task parallelism",
+            "Data parallelism",
+            "Pipeline parallelism",
+            "Control parallelism",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which architecture would be most suitable for real-time graphics rendering?",
+          options: ["SISD", "SIMD", "MISD", "MIMD"],
+          answer: 1,
+        },
+        {
+          q: "In a pipeline processor, throughput increases because:",
+          options: [
+            "Instructions execute sequentially",
+            "Multiple instructions overlap in execution",
+            "Clock speed is increased",
+            "Instructions are shorter",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The main drawback of fine-grain parallelism is:",
+          options: [
+            "High synchronization overhead",
+            "Low concurrency",
+            "Excessive memory usage",
+            "Inflexibility",
+          ],
+          answer: 0,
+        },
+        {
+          q: "If a task requires frequent global communication, it performs best on:",
+          options: [
+            "Distributed memory system",
+            "Shared memory system",
+            "NUMA system",
+            "Cloud cluster",
+          ],
+          answer: 1,
+        },
+        {
+          q: "When workload is unevenly distributed among processors, the issue is called:",
+          options: [
+            "Load imbalance",
+            "Latency hiding",
+            "Data redundancy",
+            "Task dependency",
+          ],
+          answer: 0,
+        }
+      );
+
+      const form = document.getElementById("quizForm");
+      questions.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.classList.add("question");
+        div.innerHTML = `<h3>${i + 1}. ${item.q}</h3>`;
+        item.options.forEach((opt, j) => {
+          div.innerHTML += `<label class='option'><input type='radio' name='q${i}' value='${j}'> ${opt}</label><br>`;
+        });
+        div.innerHTML += `<div id='ans${i}' class='answer'></div>`;
+        form.appendChild(div);
+      });
+
+      function submitQuiz() {
+        let score = 0;
+        questions.forEach((item, i) => {
+          const selected = document.querySelector(
+            `input[name='q${i}']:checked`
+          );
+          const answerDiv = document.getElementById(`ans${i}`);
+          if (selected) {
+            if (parseInt(selected.value) === item.answer) {
+              score++;
+              answerDiv.innerHTML = `<span class='correct'>✔ Correct</span>`;
+            } else {
+              answerDiv.innerHTML = `<span class='wrong'>✘ Wrong</span> — Correct answer: <b>${
+                item.options[item.answer]
+              }</b>`;
+            }
+          } else {
+            answerDiv.innerHTML = `<span class='wrong'>✘ Not answered</span> — Correct answer: <b>${
+              item.options[item.answer]
+            }</b>`;
+          }
+        });
+        const percent = Math.round((score / questions.length) * 100);
+        document.getElementById(
+          "result"
+        ).innerHTML = `You scored <b>${score}</b> out of <b>${
+          questions.length
+        }</b> (<span class='${
+          percent >= 50 ? "correct" : "wrong"
+        }'>${percent}%</span>)`;
+        document.getElementById("retryBtn").style.display = "inline-block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      document.getElementById("retryBtn").addEventListener("click", () => {
+        document.getElementById("quizForm").reset();
+        document.getElementById("result").innerHTML = "";
+        document.querySelectorAll(".answer").forEach((a) => (a.innerHTML = ""));
+        document.getElementById("retryBtn").style.display = "none";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    </script>
+  </body>
+</html>
