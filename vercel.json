@@ -1,5 +1,5 @@
 {
   "routes": [
-    { "src": "/(.*)", "dest": "index.html" }
+    { "src": "/(.*)", "dest": "parallel_architectures_quiz.html" }
   ]
 }
