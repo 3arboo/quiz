@@ -190,6 +190,16 @@
             border-color: var(--danger);
         }
         
+        .option-btn.answered-correct {
+            background: rgba(39, 174, 96, 0.3);
+            border-color: var(--success);
+        }
+        
+        .option-btn.answered-wrong {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: var(--danger);
+        }
+        
         .option-letter {
             display: inline-flex;
             align-items: center;
@@ -222,14 +232,46 @@
             margin-bottom: 15px;
             overflow: hidden;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         
-        .progress-bar {
+        .progress-segment {
             height: 100%;
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 4px;
+            position: absolute;
+            top: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .progress-correct {
+            background: var(--success);
+        }
+        
+        .progress-wrong {
+            background: var(--danger);
+        }
+        
+        .progress-unanswered {
+            background: #bdc3c7;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+            color: var(--dark);
+        }
+        
+        .progress-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
         }
         
         .level-section {
@@ -295,6 +337,7 @@
             font-weight: bold;
             font-size: 0.8rem;
             position: relative;
+            border: 2px solid transparent;
         }
         
         .grid-item:active {
@@ -304,11 +347,26 @@
         .grid-item.current {
             background: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
         
         .grid-item.answered {
-            background: var(--secondary);
             color: white;
+        }
+        
+        .grid-item.correct {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .grid-item.wrong {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+        
+        .grid-item.unanswered {
+            background: #bdc3c7;
+            border-color: #bdc3c7;
         }
         
         .grid-item.answered.correct::after {
@@ -488,6 +546,37 @@
             font-size: 0.9rem;
         }
         
+        .status-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .status-correct {
+            background: var(--success);
+        }
+        
+        .status-wrong {
+            background: var(--danger);
+        }
+        
+        .status-unanswered {
+            background: #bdc3c7;
+        }
+        
         /* تحسينات للشاشات الصغيرة جداً */
         @media (max-width: 360px) {
             .header h1 {
@@ -585,6 +674,21 @@
                     <div class="question-text" id="questionText"></div>
                     <div class="options-grid" id="optionsGrid"></div>
                     <div class="feedback" id="feedback"></div>
+                    
+                    <div class="status-indicator">
+                        <div class="status-item">
+                            <div class="status-dot status-correct"></div>
+                            <span>Correct</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-dot status-wrong"></div>
+                            <span>Wrong</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-dot status-unanswered"></div>
+                            <span>Unanswered</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -602,8 +706,23 @@
                     </div>
                 </div>
                 
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-labels">
+                    <div class="progress-label">
+                        <div class="progress-dot" style="background: var(--success)"></div>
+                        <span id="correctProgress">0 Correct</span>
+                    </div>
+                    <div class="progress-label">
+                        <div class="progress-dot" style="background: var(--danger)"></div>
+                        <span id="wrongProgress">0 Wrong</span>
+                    </div>
+                    <div class="progress-label">
+                        <div class="progress-dot" style="background: #bdc3c7"></div>
+                        <span id="unansweredProgress">60 Unanswered</span>
+                    </div>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <!-- Progress segments will be dynamically inserted here -->
                 </div>
                 <div style="font-size: 0.8rem; text-align: center; margin-bottom: 10px;">Questions Progress</div>
                 
@@ -1023,6 +1142,7 @@
         let userAnswerStatus = new Array(questions.length).fill(null);
         let score = 0;
         let correctCount = 0;
+        let wrongCount = 0;
         let currentStreak = 0;
         let level = 1;
         let xp = 0;
@@ -1042,7 +1162,10 @@
         const levelNameElement = document.getElementById('levelName');
         const xpProgress = document.getElementById('xpProgress');
         const timerElement = document.getElementById('timer');
-        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const correctProgressElement = document.getElementById('correctProgress');
+        const wrongProgressElement = document.getElementById('wrongProgress');
+        const unansweredProgressElement = document.getElementById('unansweredProgress');
         const questionGrid = document.getElementById('questionGrid');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -1053,6 +1176,7 @@
         // Initialize the game
         function initGame() {
             createQuestionGrid();
+            updateProgressBar();
             displayQuestion(currentQuestionIndex);
             updateNavigationButtons();
             updateStats();
@@ -1078,7 +1202,6 @@
                     displayQuestion(currentQuestionIndex);
                     updateNavigationButtons();
                     updateQuestionGrid();
-                    resetOptionStyles();
                 }
             });
 
@@ -1101,34 +1224,74 @@
 
                 if (Math.abs(diff) > swipeThreshold) {
                     if (diff > 0 && currentQuestionIndex < questions.length - 1) {
-                        // Swipe left - next question
                         currentQuestionIndex++;
                     } else if (diff < 0 && currentQuestionIndex > 0) {
-                        // Swipe right - previous question
                         currentQuestionIndex--;
                     }
                     displayQuestion(currentQuestionIndex);
                     updateNavigationButtons();
                     updateQuestionGrid();
-                    resetOptionStyles();
                 }
             }
         }
 
-        // Create question grid
+        // Update progress bar with segments
+        function updateProgressBar() {
+            progressContainer.innerHTML = '';
+            
+            const totalQuestions = questions.length;
+            const correctWidth = (correctCount / totalQuestions) * 100;
+            const wrongWidth = (wrongCount / totalQuestions) * 100;
+            const unansweredWidth = ((totalQuestions - correctCount - wrongCount) / totalQuestions) * 100;
+            
+            // Create segments
+            if (correctCount > 0) {
+                const correctSegment = document.createElement('div');
+                correctSegment.classList.add('progress-segment', 'progress-correct');
+                correctSegment.style.width = `${correctWidth}%`;
+                correctSegment.style.left = '0%';
+                progressContainer.appendChild(correctSegment);
+            }
+            
+            if (wrongCount > 0) {
+                const wrongSegment = document.createElement('div');
+                wrongSegment.classList.add('progress-segment', 'progress-wrong');
+                wrongSegment.style.width = `${wrongWidth}%`;
+                wrongSegment.style.left = `${correctWidth}%`;
+                progressContainer.appendChild(wrongSegment);
+            }
+            
+            if (correctCount + wrongCount < totalQuestions) {
+                const unansweredSegment = document.createElement('div');
+                unansweredSegment.classList.add('progress-segment', 'progress-unanswered');
+                unansweredSegment.style.width = `${unansweredWidth}%`;
+                unansweredSegment.style.left = `${correctWidth + wrongWidth}%`;
+                progressContainer.appendChild(unansweredSegment);
+            }
+            
+            // Update labels
+            correctProgressElement.textContent = `${correctCount} Correct`;
+            wrongProgressElement.textContent = `${wrongCount} Wrong`;
+            unansweredProgressElement.textContent = `${totalQuestions - correctCount - wrongCount} Unanswered`;
+        }
+
+        // Create question grid with dynamic states
         function createQuestionGrid() {
             questionGrid.innerHTML = '';
             for (let i = 0; i < questions.length; i++) {
                 const gridItem = document.createElement('div');
                 gridItem.classList.add('grid-item');
                 gridItem.textContent = i + 1;
+                
+                // Set initial classes based on answer status
+                updateGridItemState(gridItem, i);
+                
                 gridItem.addEventListener('click', () => {
                     if (gameActive) {
                         currentQuestionIndex = i;
                         displayQuestion(currentQuestionIndex);
                         updateNavigationButtons();
                         updateQuestionGrid();
-                        resetOptionStyles();
                     }
                 });
                 questionGrid.appendChild(gridItem);
@@ -1136,26 +1299,37 @@
             updateQuestionGrid();
         }
 
+        // Update individual grid item state
+        function updateGridItemState(gridItem, index) {
+            // Remove all state classes
+            gridItem.classList.remove('current', 'correct', 'wrong', 'unanswered', 'answered');
+            
+            // Add current class if this is the current question
+            if (index === currentQuestionIndex) {
+                gridItem.classList.add('current');
+            }
+            
+            // Add state class based on answer status
+            if (userAnswerStatus[index] === 'correct') {
+                gridItem.classList.add('answered', 'correct');
+            } else if (userAnswerStatus[index] === 'wrong') {
+                gridItem.classList.add('answered', 'wrong');
+            } else if (userAnswers[index] !== null) {
+                gridItem.classList.add('answered', 'unanswered');
+            } else {
+                gridItem.classList.add('unanswered');
+            }
+        }
+
         // Update question grid highlighting
         function updateQuestionGrid() {
             const gridItems = document.querySelectorAll('.grid-item');
             gridItems.forEach((item, index) => {
-                item.classList.remove('current', 'answered', 'correct', 'wrong');
-                if (index === currentQuestionIndex) {
-                    item.classList.add('current');
-                }
-                if (userAnswers[index] !== null) {
-                    item.classList.add('answered');
-                    if (userAnswerStatus[index] === 'correct') {
-                        item.classList.add('correct');
-                    } else if (userAnswerStatus[index] === 'wrong') {
-                        item.classList.add('wrong');
-                    }
-                }
+                updateGridItemState(item, index);
             });
         }
 
-        // Display current question
+        // Display current question with saved state
         function displayQuestion(index) {
             const question = questions[index];
             questionText.textContent = `${index + 1}. ${question.q}`;
@@ -1166,8 +1340,23 @@
             question.options.forEach((option, i) => {
                 const optionBtn = document.createElement('div');
                 optionBtn.classList.add('option-btn');
+                
+                // Set initial state based on saved answer
                 if (userAnswers[index] === i) {
                     optionBtn.classList.add('selected');
+                }
+                
+                // Apply correct/wrong styling if already answered
+                if (userAnswerStatus[index] === 'correct') {
+                    if (i === question.answer) {
+                        optionBtn.classList.add('answered-correct');
+                    }
+                } else if (userAnswerStatus[index] === 'wrong') {
+                    if (i === userAnswers[index]) {
+                        optionBtn.classList.add('answered-wrong');
+                    } else if (i === question.answer) {
+                        optionBtn.classList.add('correct');
+                    }
                 }
                 
                 optionBtn.innerHTML = `
@@ -1175,38 +1364,32 @@
                     <span class="option-text">${option}</span>
                 `;
                 
-                optionBtn.addEventListener('click', () => {
-                    if (gameActive && userAnswerStatus[index] === null) {
+                // Only allow selection if not already answered
+                if (userAnswerStatus[index] === null) {
+                    optionBtn.addEventListener('click', () => {
                         document.querySelectorAll('.option-btn').forEach(btn => {
                             btn.classList.remove('selected');
                         });
                         optionBtn.classList.add('selected');
                         userAnswers[index] = i;
                         updateQuestionGrid();
-                    }
-                });
+                    });
+                }
                 
                 optionsGrid.appendChild(optionBtn);
             });
             
+            // Show feedback if already answered
             if (userAnswerStatus[index] !== null) {
-                showFeedback(index);
+                showFeedback(index, false);
             } else {
                 feedback.style.display = 'none';
             }
             
-            updateProgress();
+            updateNavigationButtons();
         }
 
-        // Reset option styles
-        function resetOptionStyles() {
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.classList.remove('correct', 'wrong');
-            });
-            feedback.style.display = 'none';
-        }
-
-        // Check answer
+        // Check answer and save state
         function checkAnswer() {
             if (userAnswers[currentQuestionIndex] === null) {
                 feedback.textContent = "Please select an answer first!";
@@ -1215,31 +1398,41 @@
                 return;
             }
             
+            // Don't allow re-answering
+            if (userAnswerStatus[currentQuestionIndex] !== null) {
+                feedback.textContent = "You have already answered this question!";
+                feedback.style.display = 'block';
+                return;
+            }
+            
             const isCorrect = userAnswers[currentQuestionIndex] === questions[currentQuestionIndex].answer;
             userAnswerStatus[currentQuestionIndex] = isCorrect ? 'correct' : 'wrong';
             
+            // Update counts
             if (isCorrect) {
-                score += 10;
                 correctCount++;
+                score += 10;
                 currentStreak++;
                 if (currentStreak >= 3) score += currentStreak * 5;
                 xp += 10 + (currentStreak * 2);
                 if (xp >= xpToNextLevel) levelUp();
             } else {
+                wrongCount++;
                 currentStreak = 0;
             }
             
-            showFeedback(currentQuestionIndex);
+            showFeedback(currentQuestionIndex, true);
             updateStats();
             updateQuestionGrid();
+            updateProgressBar();
             
+            // Auto-advance after a short delay if not the last question
             if (currentQuestionIndex < questions.length - 1) {
                 setTimeout(() => {
                     currentQuestionIndex++;
                     displayQuestion(currentQuestionIndex);
                     updateNavigationButtons();
                     updateQuestionGrid();
-                    resetOptionStyles();
                 }, 2000);
             } else {
                 const allAnswered = userAnswers.every(answer => answer !== null);
@@ -1247,11 +1440,12 @@
             }
         }
 
-        // Show feedback
-        function showFeedback(index) {
+        // Show feedback with saved state
+        function showFeedback(index, isNewAnswer) {
             const isCorrect = userAnswerStatus[index] === 'correct';
             const question = questions[index];
             
+            // Update option styling
             document.querySelectorAll('.option-btn').forEach((btn, i) => {
                 if (i === question.answer) {
                     btn.classList.add('correct');
@@ -1260,26 +1454,38 @@
                 }
             });
             
-            feedback.textContent = isCorrect 
-                ? `✓ Correct! ${question.explanation}` 
-                : `✗ Incorrect. Correct: ${question.options[question.answer]}. ${question.explanation}`;
+            if (isNewAnswer) {
+                feedback.textContent = isCorrect 
+                    ? `✓ Correct! ${question.explanation}` 
+                    : `✗ Incorrect. Correct: ${question.options[question.answer]}. ${question.explanation}`;
+            } else {
+                feedback.textContent = isCorrect 
+                    ? `✓ You answered correctly: ${question.explanation}` 
+                    : `✗ Your answer was incorrect. Correct: ${question.options[question.answer]}. ${question.explanation}`;
+            }
             
             feedback.classList.remove('correct', 'wrong');
             feedback.classList.add(isCorrect ? 'correct' : 'wrong');
             feedback.style.display = 'block';
         }
 
-        // Update navigation buttons
+        // Update navigation buttons based on answer state
         function updateNavigationButtons() {
             prevBtn.disabled = currentQuestionIndex === 0;
             nextBtn.disabled = currentQuestionIndex === questions.length - 1;
             
             if (userAnswerStatus[currentQuestionIndex] !== null) {
-                submitBtn.textContent = "Answered";
+                submitBtn.textContent = "Already Answered";
                 submitBtn.disabled = true;
+                submitBtn.style.background = "#bdc3c7";
+            } else if (userAnswers[currentQuestionIndex] !== null) {
+                submitBtn.textContent = "Check Answer";
+                submitBtn.disabled = false;
+                submitBtn.style.background = "linear-gradient(to right, var(--primary), var(--accent))";
             } else {
                 submitBtn.textContent = "Check Answer";
                 submitBtn.disabled = false;
+                submitBtn.style.background = "linear-gradient(to right, var(--primary), var(--accent))";
             }
         }
 
@@ -1295,15 +1501,6 @@
             
             const levelNames = ["Novice", "Learner", "Apprentice", "Adept", "Expert", "Master"];
             levelNameElement.textContent = levelNames[Math.min(level - 1, levelNames.length - 1)];
-            
-            updateProgress();
-        }
-
-        // Update progress
-        function updateProgress() {
-            const answeredCount = userAnswers.filter(answer => answer !== null).length;
-            const progress = (answeredCount / questions.length) * 100;
-            progressBar.style.width = `${progress}%`;
         }
 
         // Level up
@@ -1380,6 +1577,7 @@
             userAnswerStatus.fill(null);
             score = 0;
             correctCount = 0;
+            wrongCount = 0;
             currentStreak = 0;
             level = 1;
             xp = 0;
@@ -1390,10 +1588,12 @@
             resultDiv.style.display = 'none';
             submitBtn.style.display = 'block';
             retryBtn.style.display = 'none';
+            submitBtn.style.background = "linear-gradient(to right, var(--primary), var(--accent))";
             
+            createQuestionGrid();
+            updateProgressBar();
             displayQuestion(currentQuestionIndex);
             updateNavigationButtons();
-            updateQuestionGrid();
             updateStats();
             startTimer();
             timerElement.style.color = '';
